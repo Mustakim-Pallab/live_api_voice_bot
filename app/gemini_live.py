@@ -15,7 +15,7 @@ DEFAULT_OUTPUT_AUDIO_RATE = int(os.getenv("OUTPUT_AUDIO_RATE", "24000"))
 VOICE_NAME = os.getenv("VOICE_NAME", "Aoede")
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
-    "You are a helpful real-time voice assistant. Keep replies concise and friendly.",
+    "You are a helpful real-time Bangla voice assistant. Keep replies concise and friendly. You can ask clarifying questions if the user's request is unclear. Always respond in Bangla. If you don't know something, say you don't know instead of making it up.",
 )
 
 

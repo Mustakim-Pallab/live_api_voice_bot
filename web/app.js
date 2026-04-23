@@ -1,10 +1,9 @@
-const connectBtn = document.getElementById("connectBtn");
-const startBtn = document.getElementById("startBtn");
-const stopBtn = document.getElementById("stopBtn");
+const callBtn = document.getElementById("callBtn");
+const callBtnText = document.getElementById("callBtnText");
 const sendBtn = document.getElementById("sendBtn");
 const textInput = document.getElementById("textInput");
-const statusPill = document.getElementById("status");
-const logEl = document.getElementById("log");
+const statusDot = document.getElementById("statusDot");
+const chatWindow = document.getElementById("chatWindow");
 
 const INPUT_RATE = 16000;
 let socket = null;
@@ -21,21 +20,24 @@ function isMicSupported() {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 }
 
-function setStatus(message) {
-  statusPill.textContent = message;
-}
+let activeUserMsg = null;
+let activeBotMsg = null;
 
-function appendLog(message) {
-  logEl.textContent += `${new Date().toLocaleTimeString()} | ${message}\n`;
-  logEl.scrollTop = logEl.scrollHeight;
+function addMessage(text, type = "system") {
+  const div = document.createElement("div");
+  div.className = `message ${type}`;
+  div.textContent = text;
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  return div;
 }
 
 function logEnvironmentHints() {
   if (!window.isSecureContext) {
-    appendLog("Mic blocked: insecure context. Open with http://localhost:<port> (not LAN IP/0.0.0.0).");
+    addMessage("Mic blocked: insecure context. Open with http://localhost:<port>.", "system");
   }
   if (!isMicSupported()) {
-    appendLog("Mic API unavailable in this browser/context.");
+    addMessage("Mic API unavailable in this browser/context.", "system");
   }
 }
 
@@ -137,100 +139,109 @@ function playPcmChunk(base64Pcm, sampleRate = 24000) {
   nextPlayAt += audioBuffer.duration;
 }
 
-async function connect() {
-  if (socket && socket.readyState === WebSocket.OPEN) {
+function setCallState(state) {
+  if (state === "connecting") {
+    callBtn.disabled = true;
+    callBtnText.textContent = "Connecting...";
+    statusDot.classList.remove("active");
+  } else if (state === "connected") {
+    callBtn.disabled = false;
+    callBtn.classList.add("danger");
+    callBtnText.textContent = "Stop Talking";
+    statusDot.classList.add("active");
+    textInput.disabled = false;
+    sendBtn.disabled = false;
+  } else {
+    callBtn.disabled = false;
+    callBtn.classList.remove("danger");
+    callBtnText.textContent = "Start Talking";
+    statusDot.classList.remove("active");
+    textInput.disabled = true;
+    sendBtn.disabled = true;
+    clearPingTimer();
+    activeUserMsg = null;
+    activeBotMsg = null;
+  }
+}
+
+async function startCall() {
+  if (!isMicSupported()) {
+    addMessage("Error: getUserMedia not available. Use Chrome/Edge/Firefox on localhost or HTTPS.", "system");
     return;
   }
 
+  if (!window.isSecureContext) {
+    addMessage("Error: microphone requires a secure context.", "system");
+    return;
+  }
+
+  setCallState("connecting");
+
   socket = new WebSocket(getWsUrl());
-  setStatus("Connecting...");
 
-  socket.addEventListener("open", () => {
-    appendLog("WebSocket connected");
-    setStatus("Connected");
-    startBtn.disabled = false;
-    sendBtn.disabled = false;
-
+  socket.addEventListener("open", async () => {
+    addMessage("Connected to server.", "system");
+    setCallState("connected");
+    
     clearPingTimer();
     pingTimer = setInterval(() => {
       if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: "ping" }));
       }
     }, 15000);
+
+    await startStreaming();
   });
 
   socket.addEventListener("message", (event) => {
     const msg = JSON.parse(event.data);
 
     if (msg.type === "ready") {
-      appendLog("Gemini Live session ready");
-    } else if (msg.type === "text") {
-      appendLog(`Assistant: ${msg.text}`);
+      addMessage("Gemini Live session ready! Start speaking.", "system");
+    } else if (msg.type === "text" || msg.type === "output_transcript") {
+      if (!activeBotMsg) {
+        activeBotMsg = addMessage("", "bot");
+      }
+      activeBotMsg.textContent += msg.text;
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     } else if (msg.type === "input_transcript") {
-      appendLog(`You said: ${msg.text}`);
-    } else if (msg.type === "output_transcript") {
-      appendLog(`Assistant transcript: ${msg.text}`);
+      if (!activeUserMsg) {
+        activeUserMsg = addMessage("", "user");
+      }
+      activeUserMsg.textContent += msg.text;
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     } else if (msg.type === "audio_out") {
       playPcmChunk(msg.pcm16, msg.sample_rate || 24000);
     } else if (msg.type === "turn_complete") {
-      appendLog(`Turn complete (${msg.reason || "unspecified"})`);
+      activeUserMsg = null;
+      activeBotMsg = null;
     } else if (msg.type === "interrupted") {
-      appendLog("Bot was interrupted");
       nextPlayAt = 0;
       if (playbackContext) {
         playbackContext.close().catch(() => {});
         playbackContext = null;
       }
     } else if (msg.type === "error") {
-      appendLog(`Error: ${msg.message}`);
+      addMessage(`Error: ${msg.message}`, "system");
     }
   });
 
   socket.addEventListener("close", () => {
-    appendLog("WebSocket closed");
-    clearPingTimer();
-    setStatus("Disconnected");
-    startBtn.disabled = true;
-    stopBtn.disabled = true;
-    sendBtn.disabled = true;
-    streaming = false;
+    disconnect();
   });
 
   socket.addEventListener("error", () => {
-    clearPingTimer();
-    appendLog("WebSocket error");
-    setStatus("Error");
+    addMessage("WebSocket error", "system");
+    disconnect();
   });
 }
 
 async function startStreaming() {
-  if (!socket || socket.readyState !== WebSocket.OPEN) {
-    appendLog("Connect first");
-    return;
-  }
-
-  if (streaming) {
-    return;
-  }
-
-  if (!isMicSupported()) {
-    appendLog("Error: getUserMedia not available. Use Chrome/Edge/Firefox on localhost or HTTPS.");
-    return;
-  }
-
-  if (!window.isSecureContext) {
-    appendLog("Error: microphone requires a secure context. Use http://localhost:7860.");
-    return;
-  }
-
   try {
     if (navigator.permissions && navigator.permissions.query) {
       try {
-        const micPermission = await navigator.permissions.query({ name: "microphone" });
-        appendLog(`Mic permission state: ${micPermission.state}`);
-      } catch (_) {
-        // Permissions API is optional across browsers.
-      }
+        await navigator.permissions.query({ name: "microphone" });
+      } catch (_) {}
     }
 
     if (!playbackContext) {
@@ -265,25 +276,16 @@ async function startStreaming() {
     processorNode.connect(captureContext.destination);
 
     streaming = true;
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    setStatus("Streaming mic");
-    appendLog("Started microphone streaming");
-    appendLog("Tip: Gemini handles turn detection automatically; speak naturally.");
+    addMessage("Microphone streaming started. You can talk now.", "system");
   } catch (error) {
-    appendLog("Microphone access error: " + error.message);
+    addMessage("Microphone access error: " + error.message, "system");
     console.error("Microphone access error", error);
+    disconnect();
   }
 }
 
 async function stopStreaming() {
-  if (!streaming) {
-    return;
-  }
-
   streaming = false;
-  startBtn.disabled = false;
-  stopBtn.disabled = true;
 
   if (processorNode) {
     processorNode.disconnect();
@@ -307,9 +309,16 @@ async function stopStreaming() {
   if (socket && socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ type: "audio_stream_end" }));
   }
+}
 
-  setStatus("Connected");
-  appendLog("Stopped microphone streaming");
+async function disconnect() {
+  await stopStreaming();
+  if (socket) {
+    socket.close();
+    socket = null;
+  }
+  setCallState("disconnected");
+  addMessage("Call disconnected.", "system");
 }
 
 function sendText() {
@@ -318,14 +327,20 @@ function sendText() {
     return;
   }
   socket.send(JSON.stringify({ type: "text", text }));
-  appendLog(`You typed: ${text}`);
+  addMessage(text, "user");
   textInput.value = "";
 }
 
-connectBtn.addEventListener("click", connect);
-startBtn.addEventListener("click", startStreaming);
-stopBtn.addEventListener("click", stopStreaming);
+callBtn.addEventListener("click", () => {
+  if (socket && socket.readyState !== WebSocket.CLOSED) {
+    disconnect();
+  } else {
+    startCall();
+  }
+});
+
 sendBtn.addEventListener("click", sendText);
+
 textInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     sendText();
