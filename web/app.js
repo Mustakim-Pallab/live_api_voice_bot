@@ -170,10 +170,17 @@ async function startCall() {
     return;
   }
 
-  if (!window.isSecureContext) {
-    addMessage("Error: microphone requires a secure context.", "system");
+  // Request microphone IMMEDIATELY during user gesture
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    addMessage("Microphone permission denied or error: " + err.message, "system");
+    setCallState("disconnected");
     return;
   }
+
+  // Clear welcome message
+  chatWindow.innerHTML = "";
 
   setCallState("connecting");
 
@@ -238,12 +245,12 @@ async function startCall() {
 
 async function startStreaming() {
   try {
+
     if (navigator.permissions && navigator.permissions.query) {
       try {
         await navigator.permissions.query({ name: "microphone" });
       } catch (_) { }
     }
-
     if (!playbackContext) {
       playbackContext = new AudioContext();
     }
@@ -251,8 +258,13 @@ async function startStreaming() {
       await playbackContext.resume();
     }
 
-    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    captureContext = new AudioContext({ sampleRate: 48000 });
+    if (!mediaStream) {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+    captureContext = new AudioContext();
+    if (captureContext.state === "suspended") {
+      await captureContext.resume();
+    }
     sourceNode = captureContext.createMediaStreamSource(mediaStream);
     processorNode = captureContext.createScriptProcessor(4096, 1, 1);
 
