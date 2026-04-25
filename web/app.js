@@ -49,9 +49,27 @@ function clearPingTimer() {
 }
 
 function getWsUrl() {
-  const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  return `${protocol}://${window.location.host}/ws/live`;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const params = new URLSearchParams(window.location.search);
+  const agentId = params.get("agent") || "default";
+  return `${protocol}//${window.location.host}/ws/live/${agentId}`;
 }
+
+async function fetchAgentConfig() {
+  try {
+    const response = await fetch("/api/agents");
+    const agents = await response.json();
+    const params = new URLSearchParams(window.location.search);
+    const agentId = params.get("agent") || "default";
+    const agent = agents[agentId] || agents["default"];
+    if (agent && agent.name) {
+      document.getElementById("agentName").textContent = agent.name;
+    }
+  } catch (error) {
+    console.error("Failed to load agent config:", error);
+  }
+}
+fetchAgentConfig();
 
 function arrayBufferToBase64(buffer) {
   const bytes = new Uint8Array(buffer);

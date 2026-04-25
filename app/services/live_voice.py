@@ -7,23 +7,21 @@ from typing import Optional
 from fastapi import WebSocket
 from google import genai
 from google.genai import types
+from app.core.settings import settings
 
 logger = logging.getLogger(__name__)
 
-INPUT_AUDIO_RATE = int(os.getenv("INPUT_AUDIO_RATE", "16000"))
-DEFAULT_OUTPUT_AUDIO_RATE = int(os.getenv("OUTPUT_AUDIO_RATE", "24000"))
-VOICE_NAME = os.getenv("VOICE_NAME", "Aoede")
-SYSTEM_PROMPT = os.getenv(
-    "SYSTEM_PROMPT",
-    "You are a helpful real-time Bangla voice assistant. Keep replies concise and friendly. You can ask clarifying questions if the user's request is unclear. Always respond in Bangla. If you don't know something, say you don't know instead of making it up.",
-)
+INPUT_AUDIO_RATE = settings.input_audio_rate
+DEFAULT_OUTPUT_AUDIO_RATE = settings.output_audio_rate
 
 
 class LiveVoiceBridge:
-    def __init__(self, websocket: WebSocket, api_key: str, model: str):
+    def __init__(self, websocket: WebSocket, api_key: str, model: str, prompt: str, voice: str):
         self.websocket = websocket
         self.api_key = api_key
         self.model = model
+        self.prompt = prompt
+        self.voice = voice
 
     async def run(self) -> None:
         client = genai.Client(api_key=self.api_key)
@@ -31,12 +29,10 @@ class LiveVoiceBridge:
             response_modalities=[types.Modality.AUDIO],
             speech_config=types.SpeechConfig(
                 voice_config=types.VoiceConfig(
-                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE_NAME)
+                    prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=self.voice)
                 )
             ),
-            # input_audio_transcription=types.AudioTranscriptionConfig(),
-            # output_audio_transcription=types.AudioTranscriptionConfig(),
-            system_instruction=SYSTEM_PROMPT,
+            system_instruction=self.prompt,
         )
 
         async with client.aio.live.connect(model=self.model, config=connect_config) as session:

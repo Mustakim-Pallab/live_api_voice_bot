@@ -6,11 +6,28 @@ services:
       - "8000:8000"
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
-      GEMINI_MODEL: gemini-3.1-flash-live-preview
+      GEMINI_MODEL: ${GEMINI_MODEL}
       HOST: 0.0.0.0
       PORT: 8000
       INPUT_AUDIO_RATE: 16000
       OUTPUT_AUDIO_RATE: 24000
-      VOICE_NAME: Aoede
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/agents_db
+    depends_on:
+      - db
     restart: unless-stopped
 
+  db:
+    image: postgres:15-alpine
+    container_name: voice_bot_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: agents_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:

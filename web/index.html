@@ -19,6 +19,18 @@
       --border: #334155;
       --user-msg: #3b82f6;
       --bot-msg: #334155;
+      --glass: rgba(30, 41, 59, 0.8);
+    }
+
+    :root[data-theme="light"] {
+      --bg: #f1f5f9;
+      --panel: #ffffff;
+      --txt: #1e293b;
+      --muted: #475569;
+      --border: #cbd5e1;
+      --user-msg: #4f46e5;
+      --bot-msg: #e2e8f0;
+      --glass: rgba(255, 255, 255, 0.9);
     }
 
     body {
@@ -61,7 +73,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(30, 41, 59, 0.8);
+      background: var(--glass);
       backdrop-filter: blur(10px);
       z-index: 10;
     }
@@ -125,6 +137,7 @@
       align-self: flex-end;
       background: var(--user-msg);
       border-bottom-right-radius: 4px;
+      color: #ffffff;
     }
 
     .message.bot {
@@ -247,6 +260,25 @@
     .btn-call.danger .icon-stop {
       display: block;
     }
+
+    .theme-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--txt);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-family: inherit;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-btn:hover {
+      background: var(--border);
+    }
   </style>
 </head>
 
@@ -256,8 +288,11 @@
     <div class="header">
       <div class="title">
         <div id="statusDot" class="status-dot"></div>
-        <span>Gemini Voice Assistant</span>
+        <span id="agentName">Gemini Voice Assistant</span>
       </div>
+      <button class="theme-btn" id="themeToggle" title="Toggle Light/Dark Mode">
+        🌓 Theme
+      </button>
     </div>
 
     <div id="chatWindow" class="chat-window">
@@ -286,6 +321,35 @@
     </div>
   </div>
 
+  <script>
+    // Theme Management
+    const themeToggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    
+    function setTheme(theme) {
+      if (theme === 'system') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.removeItem('theme_public');
+      } else {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme_public', theme);
+      }
+    }
+
+    const savedTheme = localStorage.getItem('theme_public');
+    if (savedTheme) setTheme(savedTheme);
+    else setTheme('system');
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!localStorage.getItem('theme_public')) setTheme('system');
+    });
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = root.getAttribute('data-theme');
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+  </script>
   <script type="module" src="/web/app.js"></script>
 </body>
 

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Gemini Voice Bot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #151b2b;
+      --surface-hover: #1e2638;
+      --primary: #4f46e5;
+      --primary-hover: #6366f1;
+      --accent: #06b6d4;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #1e293b;
+      --glass: rgba(21, 27, 43, 0.7);
+      --header-grad-1: #ffffff;
+      --header-grad-2: #94a3b8;
+      --input-bg: rgba(0,0,0,0.2);
+    }
+    
+    :root[data-theme="light"] {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-hover: #e2e8f0;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent: #0891b2;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --text: #1e293b;
+      --text-muted: #475569;
+      --border: #cbd5e1;
+      --glass: rgba(255, 255, 255, 0.9);
+      --header-grad-1: #1e293b;
+      --header-grad-2: #4f46e5;
+      --input-bg: rgba(0,0,0,0.03);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    * { box-sizing: border-box; }
+
+    /* Login Screen */
+    #loginScreen {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    #loginScreen.hidden { display: none; }
+
+    .logo-container {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .logo-container svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+    .subtitle { color: var(--text-muted); margin-bottom: 32px; font-weight: 300; }
+
+    .input-group { text-align: left; margin-bottom: 20px; }
+    .input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+    .input-group input, .input-group select, .input-group textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+    }
+    .input-group textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+
+    button {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    button:active { transform: translateY(1px); }
+    button.danger { background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    button.danger:hover { background: var(--danger-hover); }
+    button.secondary { background: var(--surface); border: 1px solid var(--border); box-shadow: none; color: var(--text); }
+    button.secondary:hover { background: var(--surface-hover); }
+
+    /* Dashboard */
+    #dashboard {
+      width: 100%;
+      max-width: 1200px;
+      padding: 40px 20px;
+      align-self: flex-start;
+    }
+    #dashboard.hidden { display: none; }
+
+    .dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+    .dash-header h1 { font-size: 2.2rem; background: linear-gradient(to right, var(--header-grad-1), var(--header-grad-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .dash-actions button { width: auto; padding: 10px 20px; margin-left: 10px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+    }
+
+    .agent-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .agent-card:hover { border-color: var(--primary); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+    .agent-card::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity 0.3s ease;
+    }
+    .agent-card:hover::before { opacity: 1; }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .card-header h3 { margin: 0; font-size: 1.3rem; font-weight: 500; }
+    .badge { background: rgba(79, 70, 229, 0.2); color: #818cf8; padding: 4px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .link-box {
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      border: 1px solid var(--border);
+    }
+    .link-box code { font-family: monospace; color: var(--accent); font-size: 0.85rem; word-break: break-all; }
+    .link-box a { color: var(--text); text-decoration: none; padding: 6px; border-radius: 6px; background: var(--surface-hover); display: flex; align-items: center; justify-content: center; }
+    .link-box a:hover { color: var(--primary); }
+    .link-box a svg { width: 16px; height: 16px; }
+
+    .card-actions { display: flex; gap: 10px; margin-top: 24px; }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+      width: 100%; max-width: 600px; padding: 32px; transform: translateY(20px); transition: transform 0.3s ease;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .modal-header h2 { margin: 0; font-size: 1.5rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 0; box-shadow: none; width: auto; }
+    .close-btn:hover { color: var(--text); transform: none; background: none; }
+    
+    .theme-select {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; padding: 8px 16px; border-radius: 20px; font-weight: 500; appearance: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: inherit; font-size: 0.9rem;
+    }
+    .theme-select:hover { background: var(--surface-hover); }
+
+    .btn-row { display: flex; gap: 12px; margin-top: 32px; }
+
+    #loginError { color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+
+  <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <select id="themeSelect" class="theme-select">
+      <option value="system">💻 System Theme</option>
+      <option value="dark">🌙 Dark Mode</option>
+      <option value="light">☀️ Light Mode</option>
+    </select>
+  </div>
+
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <div class="logo-container">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+    </div>
+    <h1>Welcome Back</h1>
+    <div class="subtitle">Enter your credentials to access the admin panel</div>
+    
+    <form id="loginForm">
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="username" required>
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" required>
+      </div>
+      <button type="submit">Sign In</button>
+      <div id="loginError">Invalid credentials</div>
+    </form>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <div class="dash-header">
+      <div>
+        <h1>Agent Control Center</h1>
+        <div class="subtitle" style="margin-bottom:0">Manage and deploy your Gemini voice agents</div>
+      </div>
+      <div class="dash-actions" style="display:flex; align-items:center;">
+        <button class="secondary" onclick="logout()">Logout</button>
+        <button onclick="openModal()">+ Create Agent</button>
+      </div>
+    </div>
+    
+    <div class="grid" id="agentsGrid">
+      <!-- Agent cards injected here -->
+    </div>
+  </div>
+
+  <!-- Edit/Create Modal -->
+  <div class="modal-overlay" id="agentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Edit Agent</h2>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+      
+      <input type="hidden" id="editAgentId">
+      <div class="input-group">
+        <label>Display Name</label>
+        <input type="text" id="editName" placeholder="e.g., Sales Bot">
+      </div>
+      <div class="input-group">
+        <label>Gemini Voice</label>
+        <select id="editVoice">
+          <option value="Aoede">Aoede</option>
+          <option value="Puck">Puck</option>
+          <option value="Charon">Charon</option>
+          <option value="Kore">Kore</option>
+          <option value="Fenrir">Fenrir</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>System Prompt & Instructions</label>
+        <textarea id="editPrompt" placeholder="You are a helpful assistant..."></textarea>
+      </div>
+      
+      <div class="btn-row">
+        <button class="secondary" onclick="closeModal()">Cancel</button>
+        <button onclick="saveAgent()">Save Agent</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme Management
+    const themeSelect = document.getElementById('themeSelect');
+    const root = document.documentElement;
+    
+    function setTheme(theme) {
+      if (theme === 'system') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.removeItem('theme_admin');
+      } else {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme_admin', theme);
+      }
+      themeSelect.value = theme;
+    }
+
+    const savedTheme = localStorage.getItem('theme_admin');
+    if (savedTheme) setTheme(savedTheme);
+    else setTheme('system');
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!localStorage.getItem('theme_admin')) setTheme('system');
+    });
+
+    themeSelect.addEventListener('change', (e) => {
+      setTheme(e.target.value);
+    });
+
+    let authHeader = '';
+    let agentsData = {};
+
+    // Generate UUID v4
+    function uuidv4() {
+      return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    }
+
+    // Check if already logged in via localStorage
+    const savedAuth = localStorage.getItem('gemini_auth');
+    if (savedAuth) {
+      authHeader = `Basic ${savedAuth}`;
+      checkAuth();
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        
+        if (res.ok) {
+          const token = btoa(`${u}:${p}`);
+          localStorage.setItem('gemini_auth', token);
+          authHeader = `Basic ${token}`;
+          document.getElementById('loginError').style.display = 'none';
+          showDashboard();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (err) {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    });
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/admin/api/agents', { headers: { 'Authorization': authHeader } });
+        if (res.ok) {
+          showDashboard();
+        } else {
+          logout();
+        }
+      } catch (e) {
+        logout();
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('gemini_auth');
+      authHeader = '';
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    async function showDashboard() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      loadAgents();
+    }
+
+    async function loadAgents() {
+      const res = await fetch('/admin/api/agents', { headers: { 'Authorization': authHeader } });
+      if (!res.ok) return logout();
+      
+      agentsData = await res.json();
+      const grid = document.getElementById('agentsGrid');
+      grid.innerHTML = '';
+      
+      for (const [id, config] of Object.entries(agentsData)) {
+        const isDefault = id === 'default';
+        const url = `${window.location.origin}/?agent=${id}`;
+        
+        const card = document.createElement('div');
+        card.className = 'agent-card';
+        card.innerHTML = `
+          <div class="card-header">
+            <h3>${config.name || 'Unnamed Agent'}</h3>
+            ${isDefault ? '<span class="badge">Default</span>' : ''}
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
+            <strong>Voice:</strong> ${config.voice || 'Aoede'}
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            ${config.prompt || 'No prompt set.'}
+          </div>
+          
+          <div class="link-box">
+            <code>${url}</code>
+            <a href="${url}" target="_blank" title="Open Chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+          </div>
+
+          <div class="card-actions">
+            <button class="secondary" onclick="openModal('${id}')">Edit Agent</button>
+            ${!isDefault ? `<button class="danger" onclick="deleteAgent('${id}')">Delete</button>` : ''}
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    function openModal(id = null) {
+      document.getElementById('agentModal').classList.add('active');
+      if (id && agentsData[id]) {
+        document.getElementById('modalTitle').textContent = 'Edit Agent';
+        document.getElementById('editAgentId').value = id;
+        document.getElementById('editName').value = agentsData[id].name;
+        document.getElementById('editVoice').value = agentsData[id].voice;
+        document.getElementById('editPrompt').value = agentsData[id].prompt;
+      } else {
+        document.getElementById('modalTitle').textContent = 'Create New Agent';
+        document.getElementById('editAgentId').value = '';
+        document.getElementById('editName').value = 'New Custom Agent';
+        document.getElementById('editVoice').value = 'Aoede';
+        document.getElementById('editPrompt').value = 'You are a helpful assistant.';
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('agentModal').classList.remove('active');
+    }
+
+    async function saveAgent() {
+      let id = document.getElementById('editAgentId').value;
+      if (!id) id = uuidv4(); // Generate UUID for new agents
+
+      const config = {
+        name: document.getElementById('editName').value,
+        voice: document.getElementById('editVoice').value,
+        prompt: document.getElementById('editPrompt').value
+      };
+
+      const res = await fetch(`/admin/api/agents/${id}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        },
+        body: JSON.stringify(config)
+      });
+
+      if (res.ok) {
+        closeModal();
+        loadAgents();
+      } else {
+        alert('Failed to save agent');
+      }
+    }
+
+    async function deleteAgent(id) {
+      if (!confirm('Are you sure you want to completely delete this agent?')) return;
+      
+      const res = await fetch(`/admin/api/agents/${id}`, { 
+        method: 'DELETE',
+        headers: { 'Authorization': authHeader }
+      });
+      if (res.ok) {
+        loadAgents();
+      }
+    }
+  </script>
+</body>
+</html>
