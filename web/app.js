@@ -123,7 +123,7 @@ function playPcmChunk(base64Pcm, sampleRate = 24000) {
   }
 
   if (playbackContext.state === "suspended") {
-    playbackContext.resume().catch(() => {});
+    playbackContext.resume().catch(() => { });
   }
 
   const audioBuffer = pcm16ToAudioBuffer(base64ToArrayBuffer(base64Pcm), sampleRate);
@@ -182,7 +182,7 @@ async function startCall() {
   socket.addEventListener("open", async () => {
     addMessage("Connected to server.", "system");
     setCallState("connected");
-    
+
     clearPingTimer();
     pingTimer = setInterval(() => {
       if (socket && socket.readyState === WebSocket.OPEN) {
@@ -218,7 +218,7 @@ async function startCall() {
     } else if (msg.type === "interrupted") {
       nextPlayAt = 0;
       if (playbackContext) {
-        playbackContext.close().catch(() => {});
+        playbackContext.close().catch(() => { });
         playbackContext = null;
       }
     } else if (msg.type === "error") {
@@ -241,7 +241,7 @@ async function startStreaming() {
     if (navigator.permissions && navigator.permissions.query) {
       try {
         await navigator.permissions.query({ name: "microphone" });
-      } catch (_) {}
+      } catch (_) { }
     }
 
     if (!playbackContext) {

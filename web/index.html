@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
       --user-msg: #3b82f6;
       --bot-msg: #334155;
     }
+
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
@@ -28,7 +30,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
+
     .chat-container {
       width: 100%;
       max-width: 480px;
@@ -42,6 +46,7 @@
       overflow: hidden;
       border: 1px solid var(--border);
     }
+
     @media (max-width: 480px) {
       .chat-container {
         border-radius: 0;
@@ -49,6 +54,7 @@
         border: none;
       }
     }
+
     .header {
       padding: 20px;
       border-bottom: 1px solid var(--border);
@@ -59,6 +65,7 @@
       backdrop-filter: blur(10px);
       z-index: 10;
     }
+
     .title {
       font-weight: 600;
       font-size: 1.1rem;
@@ -66,6 +73,7 @@
       align-items: center;
       gap: 10px;
     }
+
     .status-dot {
       width: 10px;
       height: 10px;
@@ -73,42 +81,58 @@
       background: var(--muted);
       transition: background 0.3s;
     }
+
     .status-dot.active {
       background: #22c55e;
       box-shadow: 0 0 10px #22c55e;
     }
+
     .chat-window {
       flex: 1;
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       scroll-behavior: smooth;
     }
+
     .message {
-      max-width: 80%;
+      max-width: 85%;
       padding: 12px 16px;
       border-radius: 18px;
       font-size: 0.95rem;
       line-height: 1.5;
       word-wrap: break-word;
+      overflow-wrap: anywhere;
       animation: fadeIn 0.3s ease-out;
     }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .message.user {
       align-self: flex-end;
       background: var(--user-msg);
       border-bottom-right-radius: 4px;
     }
+
     .message.bot {
       align-self: flex-start;
       background: var(--bot-msg);
       border-bottom-left-radius: 4px;
     }
+
     .message.system {
       align-self: center;
       background: transparent;
@@ -116,6 +140,7 @@
       font-size: 0.8rem;
       padding: 4px 8px;
     }
+
     .controls {
       padding: 20px;
       background: var(--panel);
@@ -124,10 +149,12 @@
       flex-direction: column;
       gap: 15px;
     }
+
     .input-row {
       display: flex;
       gap: 10px;
     }
+
     input {
       flex: 1;
       background: var(--bg);
@@ -139,9 +166,11 @@
       outline: none;
       transition: border-color 0.2s;
     }
+
     input:focus {
       border-color: var(--primary);
     }
+
     button {
       border: none;
       cursor: pointer;
@@ -153,6 +182,7 @@
       justify-content: center;
       gap: 8px;
     }
+
     .btn-send {
       background: var(--primary);
       color: white;
@@ -163,13 +193,16 @@
       align-items: center;
       justify-content: center;
     }
+
     .btn-send:hover {
       background: var(--primary-hover);
     }
+
     .btn-send:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
     .btn-call {
       width: 100%;
       padding: 14px;
@@ -178,32 +211,45 @@
       background: var(--primary);
       color: white;
     }
+
     .btn-call:hover {
       background: var(--primary-hover);
     }
+
     .btn-call.danger {
       background: var(--danger);
     }
+
     .btn-call.danger:hover {
       background: var(--danger-hover);
     }
+
     .btn-call:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
     .icon {
       width: 20px;
       height: 20px;
       fill: currentColor;
     }
+
     /* Stop Icon */
     .icon-stop {
       display: none;
     }
-    .btn-call.danger .icon-start { display: none; }
-    .btn-call.danger .icon-stop { display: block; }
+
+    .btn-call.danger .icon-start {
+      display: none;
+    }
+
+    .btn-call.danger .icon-stop {
+      display: block;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="chat-container">
@@ -213,20 +259,28 @@
         <span>Gemini Voice Assistant</span>
       </div>
     </div>
-    
+
     <div id="chatWindow" class="chat-window">
       <div class="message bot">Hello! I am your AI assistant. Click "Start Call" to speak with me.</div>
     </div>
-    
+
     <div class="controls">
       <div class="input-row">
         <input type="text" id="textInput" placeholder="Type a message..." disabled />
         <button id="sendBtn" class="btn-send" disabled>
-          <svg class="icon" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+          </svg>
         </button>
+      </div>
       <button id="callBtn" class="btn-call">
-        <svg class="icon icon-start" viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
-        <svg class="icon icon-stop" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+        <svg class="icon icon-start" viewBox="0 0 24 24">
+          <path
+            d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+        </svg>
+        <svg class="icon icon-stop" viewBox="0 0 24 24">
+          <path d="M6 6h12v12H6z" />
+        </svg>
         <span id="callBtnText">Start Talking</span>
       </button>
     </div>
@@ -234,5 +288,5 @@
 
   <script type="module" src="/web/app.js"></script>
 </body>
-</html>
 
+</html>

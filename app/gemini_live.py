@@ -28,15 +28,14 @@ class LiveVoiceBridge:
     async def run(self) -> None:
         client = genai.Client(api_key=self.api_key)
         connect_config = types.LiveConnectConfig(
-            # This model currently accepts AUDIO responses; requesting TEXT can trigger 1011.
             response_modalities=[types.Modality.AUDIO],
             speech_config=types.SpeechConfig(
                 voice_config=types.VoiceConfig(
                     prebuilt_voice_config=types.PrebuiltVoiceConfig(voice_name=VOICE_NAME)
                 )
             ),
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
+            # input_audio_transcription=types.AudioTranscriptionConfig(),
+            # output_audio_transcription=types.AudioTranscriptionConfig(),
             system_instruction=SYSTEM_PROMPT,
         )
 
