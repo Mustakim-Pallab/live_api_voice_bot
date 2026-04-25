@@ -329,6 +329,14 @@ async function disconnect() {
     socket.close();
     socket = null;
   }
+
+  // Immediately stop any currently playing or buffered audio
+  nextPlayAt = 0;
+  if (playbackContext) {
+    playbackContext.close().catch(() => { });
+    playbackContext = null;
+  }
+
   setCallState("disconnected");
   addMessage("Call disconnected.", "system");
 }
