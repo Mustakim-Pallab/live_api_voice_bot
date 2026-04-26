@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,9 +22,9 @@
       --glass: rgba(21, 27, 43, 0.7);
       --header-grad-1: #ffffff;
       --header-grad-2: #94a3b8;
-      --input-bg: rgba(0,0,0,0.2);
+      --input-bg: rgba(0, 0, 0, 0.2);
     }
-    
+
     :root[data-theme="light"] {
       --bg: #f1f5f9;
       --surface: #ffffff;
@@ -39,40 +40,112 @@
       --glass: rgba(255, 255, 255, 0.9);
       --header-grad-1: #1e293b;
       --header-grad-2: #4f46e5;
-      --input-bg: rgba(0,0,0,0.03);
+      --input-bg: rgba(0, 0, 0, 0.03);
     }
 
     body {
       margin: 0;
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
+      background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.1), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.1), transparent 40%),
+        var(--bg);
       background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: block;
+      overflow: hidden;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    .switch-mode {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .switch-mode a {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .switch-mode a:hover {
+      text-decoration: underline;
+    }
 
     /* Login Screen */
     #loginScreen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: var(--glass);
-      backdrop-filter: blur(12px);
-      padding: 40px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 48px 40px;
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       width: 100%;
-      max-width: 400px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      max-width: 420px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05);
       text-align: center;
-      transition: all 0.3s ease;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: loginFadeIn 0.8s ease-out;
     }
-    #loginScreen.hidden { display: none; }
+
+    @keyframes loginFadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #loginScreen.hidden {
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .form-view {
+      animation: formFadeIn 0.4s ease-out;
+    }
+
+    @keyframes formFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
     .logo-container {
       width: 64px;
@@ -97,55 +170,109 @@
       font-weight: 600;
       letter-spacing: -0.5px;
     }
-    .subtitle { color: var(--text-muted); margin-bottom: 32px; font-weight: 300; }
 
-    .input-group { text-align: left; margin-bottom: 20px; }
-    .input-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
-    .input-group input, .input-group select, .input-group textarea {
+    .subtitle {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
       width: 100%;
       background: var(--input-bg);
       border: 1px solid var(--border);
+      border-radius: 12px;
       color: var(--text);
       padding: 12px 16px;
-      border-radius: 12px;
       font-family: inherit;
       font-size: 1rem;
       transition: all 0.2s ease;
     }
-    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+      background: rgba(0, 0, 0, 0.3);
     }
-    .input-group textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+
+    :root[data-theme="light"] .input-group input:focus {
+      background: white;
+    }
+
+    .input-group textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.5;
+    }
 
     button {
-      width: 100%;
-      background: var(--primary);
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
       color: white;
       border: none;
-      padding: 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
-    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
-    button:active { transform: translateY(1px); }
-    button.danger { background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-    button.danger:hover { background: var(--danger-hover); }
-    button.secondary { background: var(--surface); border: 1px solid var(--border); box-shadow: none; color: var(--text); }
-    button.secondary:hover { background: var(--surface-hover); }
 
-    /* Dashboard */
-    #dashboard {
-      width: 100%;
-      max-width: 1200px;
-      padding: 40px 20px;
-      align-self: flex-start;
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+      filter: brightness(1.1);
     }
-    #dashboard.hidden { display: none; }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.danger {
+      background: var(--danger);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    button.danger:hover {
+      background: var(--danger-hover);
+    }
+
+    button.secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      color: var(--text);
+    }
+
+    button.secondary:hover {
+      background: var(--surface-hover);
+      border-color: var(--text-muted);
+    }
+
+    button.secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    #dashboard.hidden {
+      display: none !important;
+    }
 
     .dash-header {
       display: flex;
@@ -153,8 +280,19 @@
       align-items: center;
       margin-bottom: 40px;
     }
-    .dash-header h1 { font-size: 2.2rem; background: linear-gradient(to right, var(--header-grad-1), var(--header-grad-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .dash-actions button { width: auto; padding: 10px 20px; margin-left: 10px; }
+
+    .dash-header h1 {
+      font-size: 2.2rem;
+      background: linear-gradient(to right, var(--header-grad-1), var(--header-grad-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dash-actions button {
+      width: auto;
+      padding: 10px 20px;
+      margin-left: 10px;
+    }
 
     .grid {
       display: grid;
@@ -162,28 +300,146 @@
       gap: 24px;
     }
 
+    .table-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow-y: auto;
+      margin-top: 24px;
+      flex: 1; /* Stretch to fill available height */
+      position: relative;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate; /* Better for sticky headers */
+      border-spacing: 0;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface) !important; /* Solid background */
+      padding: 16px 24px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100; /* Higher z-index */
+    }
+
+    td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pagination-info {
+      color: var(--text-muted);
+    }
+
+    .limit-selector {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .page-btn {
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      border-radius: 10px;
+    }
+
     .agent-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 24px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
     }
-    .agent-card:hover { border-color: var(--primary); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
-    .agent-card::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity 0.3s ease;
-    }
-    .agent-card:hover::before { opacity: 1; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-    .card-header h3 { margin: 0; font-size: 1.3rem; font-weight: 500; }
-    .badge { background: rgba(79, 70, 229, 0.2); color: #818cf8; padding: 4px 10px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .agent-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+
+    .agent-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .agent-card:hover::before {
+      opacity: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 500;
+    }
+
+    .badge {
+      background: rgba(79, 70, 229, 0.2);
+      color: #818cf8;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
     .link-box {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       padding: 12px;
       border-radius: 8px;
       display: flex;
@@ -192,89 +448,746 @@
       margin-top: 20px;
       border: 1px solid var(--border);
     }
-    .link-box code { font-family: monospace; color: var(--accent); font-size: 0.85rem; word-break: break-all; }
-    .link-box a { color: var(--text); text-decoration: none; padding: 6px; border-radius: 6px; background: var(--surface-hover); display: flex; align-items: center; justify-content: center; }
-    .link-box a:hover { color: var(--primary); }
-    .link-box a svg { width: 16px; height: 16px; }
 
-    .card-actions { display: flex; gap: 10px; margin-top: 24px; }
-    
+    .link-box code {
+      font-family: monospace;
+      color: var(--accent);
+      font-size: 0.85rem;
+      word-break: break-all;
+    }
+
+    .link-box a {
+      color: var(--text);
+      text-decoration: none;
+      padding: 6px;
+      border-radius: 6px;
+      background: var(--surface-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .link-box a:hover {
+      color: var(--primary);
+    }
+
+    .link-box a svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
     /* Modal */
     .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .modal {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
-      width: 100%; max-width: 600px; padding: 32px; transform: translateY(20px); transition: transform 0.3s ease;
-      max-height: 90vh; overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 600px;
+      padding: 32px;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
     }
-    .modal-overlay.active .modal { transform: translateY(0); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .modal-header h2 { margin: 0; font-size: 1.5rem; }
-    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; padding: 0; box-shadow: none; width: auto; }
-    .close-btn:hover { color: var(--text); transform: none; background: none; }
-    
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      box-shadow: none;
+      width: auto;
+    }
+
+    .close-btn:hover {
+      color: var(--text);
+      transform: none;
+      background: none;
+    }
+
     .theme-select {
-      background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; padding: 8px 16px; border-radius: 20px; font-weight: 500; appearance: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: inherit; font-size: 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 500;
+      appearance: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-family: inherit;
+      font-size: 0.9rem;
     }
-    .theme-select:hover { background: var(--surface-hover); }
 
-    .btn-row { display: flex; gap: 12px; margin-top: 32px; }
+    .theme-select:hover {
+      background: var(--surface-hover);
+    }
 
-    #loginError { color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none; }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn-row button {
+      flex: 1;
+    }
+
+    form button {
+      width: 100%;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #ef4444;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 2000;
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #loginError {
+      color: var(--danger);
+      font-size: 0.9rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    /* Layout & Tabs */
+    .dashboard-layout {
+      display: flex;
+      width: calc(100% - 40px);
+      height: calc(100vh - 40px);
+      margin: 20px;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar {
+      width: 250px;
+      background: transparent;
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .nav-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+    }
+
+    .nav-links li {
+      padding: 15px 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links li:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .nav-links li.active {
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary);
+      border-left-color: var(--primary);
+    }
+
+    .nav-links li.hidden {
+      display: none;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      overflow: hidden; /* Lock the main content area */
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table th {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .data-table tr {
+      transition: background 0.2s ease;
+    }
+
+    .data-table tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    :root[data-theme="light"] .data-table tr:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .data-table th.actions,
+    .data-table td.actions {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .data-table td.actions button {
+      margin-left: 8px;
+    }
+
+    /* Sidebar Footer */
+    .sidebar-footer {
+      padding: 15px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-radius: 12px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none;
+      width: 42px;
+      height: 42px;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      transform: translateY(-2px);
+      box-shadow: none;
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .dashboard-layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 10px 0;
+      }
+
+      .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding: 0 15px 10px;
+      }
+
+      .sidebar-header h2 {
+        font-size: 1.1rem;
+      }
+
+      .nav-links {
+        display: flex;
+        overflow-x: auto;
+        padding: 0 5px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-links li {
+        padding: 10px 15px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+      }
+
+      .nav-links li.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--primary);
+      }
+
+      .sidebar-logout {
+        display: none;
+        /* Hide the bottom logout on mobile, add it to header */
+      }
+
+      .mobile-logout {
+        display: block !important;
+      }
+
+      .main-content {
+        padding: 15px;
+      }
+
+      .dash-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+
+      .data-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      .card-actions {
+        flex-direction: column;
+      }
+
+      .card-actions button {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-logout {
+        display: none !important;
+      }
+    }
+
+    .transcript-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 12px 18px;
+      border-radius: 18px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      position: relative;
+      word-wrap: break-word;
+      display: inline-block;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble.bot {
+      align-self: flex-start;
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-meta {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* Wave Animation */
+    .audio-wave {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 20px;
+      margin-left: 10px;
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 100%;
+      background: var(--primary);
+      border-radius: 3px;
+      animation: wave-pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes wave-pulse {
+
+      0%,
+      100% {
+        height: 20%;
+      }
+
+      50% {
+        height: 100%;
+      }
+    }
+
+    .wave-bar:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .wave-bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .wave-bar:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .wave-bar:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .record-player-fancy {
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    #recordPlayer {
+      width: 100%;
+      height: 35px;
+      filter: invert(1) hue-rotate(180deg);
+      /* Make it look better in dark mode */
+    }
   </style>
+  <script src="https://unpkg.com/wavesurfer.js@7"></script>
+  <script src="https://unpkg.com/@microsoft/fetch-event-source@2.0.1/lib/cjs/index.js" type="module"></script>
+  <script type="module">
+    import { fetchEventSource } from 'https://unpkg.com/@microsoft/fetch-event-source@2.0.1/lib/esm/index.js';
+    window.fetchEventSource = fetchEventSource;
+  </script>
 </head>
+
 <body>
 
-  <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-    <select id="themeSelect" class="theme-select">
-      <option value="system">💻 System Theme</option>
-      <option value="dark">🌙 Dark Mode</option>
-      <option value="light">☀️ Light Mode</option>
-    </select>
-  </div>
+  <div id="toast"></div>
+
+
 
   <!-- Login Screen -->
-  <div id="loginScreen">
+  <div id="loginScreen" class="hidden">
     <div class="logo-container">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+      </svg>
     </div>
-    <h1>Welcome Back</h1>
-    <div class="subtitle">Enter your credentials to access the admin panel</div>
-    
-    <form id="loginForm">
-      <div class="input-group">
-        <label>Username</label>
-        <input type="text" id="username" required>
-      </div>
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="password" required>
-      </div>
-      <button type="submit">Sign In</button>
-      <div id="loginError">Invalid credentials</div>
-    </form>
+    <div id="loginViewContainer" class="form-view">
+      <h1>Welcome Back</h1>
+      <div class="subtitle">Enter your credentials to access the dashboard</div>
+
+      <form id="loginForm">
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="username" autocomplete="off" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="password" autocomplete="new-password" required>
+        </div>
+        <button type="submit">Sign In</button>
+        <div class="switch-mode">New here? <a onclick="switchAdminAuth('register')">Create an account</a></div>
+        <div id="loginError">Invalid credentials</div>
+      </form>
+    </div>
+
+    <div id="registerViewContainer" class="hidden form-view">
+      <h1>Create Account</h1>
+      <div class="subtitle">Sign up to build your own AI voice bots</div>
+
+      <form id="registerForm">
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="r_fullname" autocomplete="off" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="r_email" autocomplete="off" required>
+        </div>
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="r_username" autocomplete="off" required>
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="r_password" autocomplete="new-password" required>
+        </div>
+        <button type="submit">Sign Up</button>
+        <div class="switch-mode">Already have an account? <a onclick="switchAdminAuth('login')">Log in</a></div>
+        <div id="registerError" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none;"></div>
+      </form>
+    </div>
   </div>
 
   <!-- Dashboard -->
-  <div id="dashboard" class="hidden">
-    <div class="dash-header">
-      <div>
-        <h1>Agent Control Center</h1>
-        <div class="subtitle" style="margin-bottom:0">Manage and deploy your Gemini voice agents</div>
+  <div id="dashboard" class="hidden dashboard-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div>
+          <h2 style="margin:0; font-size: 1.2rem;">Gemini Voice</h2>
+          <div class="subtitle" style="margin: 0; font-size: 0.8rem;" id="sidebarUserRole">Admin</div>
+        </div>
+        <button class="secondary mobile-logout" style="padding: 6px 12px; font-size: 0.8rem;"
+          onclick="logout()">Logout</button>
       </div>
-      <div class="dash-actions" style="display:flex; align-items:center;">
-        <button class="secondary" onclick="logout()">Logout</button>
-        <button onclick="openModal()">+ Create Agent</button>
+      <ul class="nav-links">
+        <li class="nav-item" id="nav_my_agents" onclick="switchTab('my_agents')">My Agents</li>
+        <li class="nav-item hidden" id="nav_other_agents" onclick="switchTab('other_agents')">Other Agents</li>
+        <li class="nav-item" id="nav_sessions" onclick="switchTab('sessions')">Live Sessions</li>
+        <li class="nav-item" id="nav_history" onclick="switchTab('history')">Call History</li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="icon-btn" onclick="openProfileModal()" title="Edit Profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="logout()" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
       </div>
     </div>
-    
-    <div class="grid" id="agentsGrid">
-      <!-- Agent cards injected here -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- My Agents Tab -->
+      <div id="tab_my_agents" class="tab-content">
+        <div class="dash-header">
+          <div>
+            <h1>My Agents</h1>
+            <div class="subtitle" style="margin-bottom:0">Manage and deploy your Gemini voice agents</div>
+          </div>
+          <button onclick="openModal()">+ Create Agent</button>
+        </div>
+        <div class="grid" id="agentsGrid">
+          <!-- Agent cards injected here -->
+        </div>
+      </div>
+
+      <!-- Other Agents Tab -->
+      <div id="tab_other_agents" class="tab-content">
+        <div class="dash-header">
+          <div>
+            <h1>Other Agents</h1>
+            <div class="subtitle" style="margin-bottom:0">Agents created by other users</div>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Voice</th>
+              <th>Owner</th>
+              <th class="actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="otherAgentsTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Sessions Tab -->
+      <div id="tab_sessions" class="tab-content">
+        <div class="dash-header">
+          <div>
+            <h1>Live Sessions</h1>
+            <div class="subtitle" style="margin-bottom:0">Monitor ongoing conversations in real-time</div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Agent</th>
+                <th>Session ID</th>
+                <th>Listeners</th>
+                <th class="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sessionsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div id="tab_history" class="tab-content">
+        <div class="dash-header">
+          <div>
+            <h1>Call History</h1>
+            <div class="subtitle" style="margin-bottom:0">View past conversations and recordings</div>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Agent</th>
+                <th>Owner</th>
+                <th>Duration</th>
+                <th class="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+          <div class="pagination-bar">
+            <div class="pagination-info" id="historyPaginationInfo">Showing 0-0 of 0</div>
+            <div class="pagination-controls">
+              <select id="historyLimit" class="limit-selector" onchange="changeHistoryLimit()">
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+                <option value="50">50 per page</option>
+              </select>
+              <button class="secondary page-btn" id="prevPageBtn" onclick="changeHistoryPage(-1)">Previous</button>
+              <button class="secondary page-btn" id="nextPageBtn" onclick="changeHistoryPage(1)">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -285,7 +1198,7 @@
         <h2 id="modalTitle">Edit Agent</h2>
         <button class="close-btn" onclick="closeModal()">×</button>
       </div>
-      
+
       <input type="hidden" id="editAgentId">
       <div class="input-group">
         <label>Display Name</label>
@@ -305,7 +1218,7 @@
         <label>System Prompt & Instructions</label>
         <textarea id="editPrompt" placeholder="You are a helpful assistant..."></textarea>
       </div>
-      
+
       <div class="btn-row">
         <button class="secondary" onclick="closeModal()">Cancel</button>
         <button onclick="saveAgent()">Save Agent</button>
@@ -313,34 +1226,107 @@
     </div>
   </div>
 
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Profile</h2>
+        <button class="close-btn" onclick="closeProfileModal()">×</button>
+      </div>
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="profileFullName">
+      </div>
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="profileEmail" readonly>
+      </div>
+      <div class="btn-row">
+        <button class="secondary" onclick="closeProfileModal()">Close</button>
+        <button onclick="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcript Modal -->
+  <div class="modal-overlay" id="transcriptModal">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2 id="transcriptTitle">Conversation Transcript</h2>
+        <button class="close-btn" onclick="closeTranscriptModal()">×</button>
+      </div>
+
+      <div id="audioPlayerContainer"
+        style="margin-bottom: 24px; padding: 20px; background: var(--input-bg); border-radius: 16px; display: none;">
+        <div style="margin-bottom: 12px; font-weight: 600; font-size: 0.9rem;">Recording:</div>
+        <audio id="recordPlayer" controls style="width: 100%;"></audio>
+      </div>
+
+      <div id="transcriptContent"
+        style="display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+        <!-- Transcript parts here -->
+      </div>
+
+      <div class="btn-row">
+        <button class="secondary" onclick="closeTranscriptModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // Theme Management
-    const themeSelect = document.getElementById('themeSelect');
     const root = document.documentElement;
-    
+
     function setTheme(theme) {
-      if (theme === 'system') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        localStorage.removeItem('theme_admin');
-      } else {
-        root.setAttribute('data-theme', theme);
-        localStorage.setItem('theme_admin', theme);
-      }
-      themeSelect.value = theme;
+      root.setAttribute('data-theme', theme);
+      localStorage.setItem('theme_admin', theme);
+      updateThemeIcon(theme);
     }
 
-    const savedTheme = localStorage.getItem('theme_admin');
-    if (savedTheme) setTheme(savedTheme);
-    else setTheme('system');
+    function toggleTheme() {
+      const current = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const next = current === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+    }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      if (!localStorage.getItem('theme_admin')) setTheme('system');
-    });
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (!icon) return;
+      if (theme === 'dark') {
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+      } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+    }
 
-    themeSelect.addEventListener('change', (e) => {
-      setTheme(e.target.value);
-    });
+    const savedTheme = localStorage.getItem('theme_admin') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(savedTheme);
+
+    // Profile Management
+    function openProfileModal() {
+      if (!currentUserData) return;
+      document.getElementById('profileFullName').value = currentUserData.full_name || '';
+      document.getElementById('profileEmail').value = currentUserData.email || '';
+      document.getElementById('profileModal').classList.add('active');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    async function saveProfile() {
+      showToast('Profile updated');
+      closeProfileModal();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
 
     let authHeader = '';
     let agentsData = {};
@@ -353,28 +1339,53 @@
     }
 
     // Check if already logged in via localStorage
-    const savedAuth = localStorage.getItem('gemini_auth');
-    if (savedAuth) {
-      authHeader = `Basic ${savedAuth}`;
-      checkAuth();
+    const savedToken = localStorage.getItem('gemini_auth_token');
+
+    // Run initialization as soon as possible
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
+    function initApp() {
+      if (savedToken) {
+        authHeader = `Bearer ${savedToken}`;
+        checkAuth();
+      } else {
+        document.getElementById('loginScreen').classList.remove('hidden');
+      }
+    }
+
+    function switchAdminAuth(view) {
+      document.getElementById('loginError').style.display = 'none';
+      document.getElementById('registerError').style.display = 'none';
+      if (view === 'login') {
+        document.getElementById('loginViewContainer').classList.remove('hidden');
+        document.getElementById('registerViewContainer').classList.add('hidden');
+      } else {
+        document.getElementById('loginViewContainer').classList.add('hidden');
+        document.getElementById('registerViewContainer').classList.remove('hidden');
+      }
     }
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const u = document.getElementById('username').value;
       const p = document.getElementById('password').value;
-      
+
       try {
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: u, password: p })
         });
-        
+
         if (res.ok) {
-          const token = btoa(`${u}:${p}`);
-          localStorage.setItem('gemini_auth', token);
-          authHeader = `Basic ${token}`;
+          const data = await res.json();
+          localStorage.setItem('gemini_auth_token', data.token);
+          localStorage.setItem('gemini_refresh_token', data.refresh_token);
+          authHeader = `Bearer ${data.token}`;
           document.getElementById('loginError').style.display = 'none';
           showDashboard();
         } else {
@@ -385,9 +1396,78 @@
       }
     });
 
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = document.getElementById('r_fullname').value;
+      const em = document.getElementById('r_email').value;
+      const u = document.getElementById('r_username').value;
+      const p = document.getElementById('r_password').value;
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p, email: em, full_name: f })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('gemini_auth_token', data.token);
+          localStorage.setItem('gemini_refresh_token', data.refresh_token);
+          authHeader = `Bearer ${data.token}`;
+          document.getElementById('registerError').style.display = 'none';
+          showDashboard();
+        } else {
+          const data = await res.json();
+          let msg = data.message;
+          if (!msg && data.detail) {
+            msg = Array.isArray(data.detail) ? data.detail[0].msg : data.detail;
+          }
+          showToast(msg || "Registration failed");
+        }
+      } catch (err) {
+        showToast("Network error");
+      }
+    });
+
+    async function apiFetch(url, options = {}) {
+      if (!options.headers) options.headers = {};
+      options.headers['Authorization'] = authHeader;
+
+      let res = await fetch(url, options);
+      if (res.status === 401) {
+        const rt = localStorage.getItem('gemini_refresh_token');
+        if (rt) {
+          try {
+            const refreshRes = await fetch('/api/refresh', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refresh_token: rt })
+            });
+            if (refreshRes.ok) {
+              const data = await refreshRes.json();
+              localStorage.setItem('gemini_auth_token', data.token);
+              localStorage.setItem('gemini_refresh_token', data.refresh_token);
+              authHeader = `Bearer ${data.token}`;
+              options.headers['Authorization'] = authHeader;
+              // Retry original request
+              res = await fetch(url, options);
+            } else {
+              logout();
+            }
+          } catch (e) {
+            logout();
+          }
+        } else {
+          logout();
+        }
+      }
+      return res;
+    }
+
     async function checkAuth() {
       try {
-        const res = await fetch('/admin/api/agents', { headers: { 'Authorization': authHeader } });
+        const res = await apiFetch('/dashboard/api/agents');
         if (res.ok) {
           showDashboard();
         } else {
@@ -399,57 +1479,138 @@
     }
 
     function logout() {
-      localStorage.removeItem('gemini_auth');
+      localStorage.removeItem('gemini_auth_token');
       authHeader = '';
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('loginScreen').classList.remove('hidden');
+
+      // Clear all inputs
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => input.value = '');
+
+      window.location.replace('/dashboard');
     }
 
+    // Prevent back-button from showing dashboard after logout
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload();
+      }
+    });
+
+    let currentUserData = null;
+    let historyOffset = 0;
+    let historyLimit = 10;
+
     async function showDashboard() {
+      console.log("Showing dashboard...");
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      loadAgents();
+
+      try {
+        const res = await apiFetch('/api/me');
+        if (res.ok) {
+          currentUserData = await res.json();
+          document.getElementById('sidebarUserRole').textContent = currentUserData.role === 'super_admin' ? 'Super Admin' : 'User';
+          if (currentUserData.role === 'super_admin') {
+            document.getElementById('nav_other_agents').classList.remove('hidden');
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch user data", e);
+      }
+
+      await loadAgents();
+      await loadHistory();
+      initSessionsSSE();
+
+      const lastTab = localStorage.getItem('admin_last_tab') || 'my_agents';
+      console.log("Restoring tab:", lastTab);
+      switchTab(lastTab);
+    }
+
+    function switchTab(tabId) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      // Show selected tab
+      const tabEl = document.getElementById('tab_' + tabId);
+      const navEl = document.getElementById('nav_' + tabId);
+
+      if (tabEl && navEl) {
+        tabEl.classList.add('active');
+        navEl.classList.add('active');
+        localStorage.setItem('admin_last_tab', tabId);
+      }
     }
 
     async function loadAgents() {
-      const res = await fetch('/admin/api/agents', { headers: { 'Authorization': authHeader } });
+      const res = await apiFetch('/dashboard/api/agents');
       if (!res.ok) return logout();
-      
+
       agentsData = await res.json();
+
       const grid = document.getElementById('agentsGrid');
       grid.innerHTML = '';
-      
+
+      const otherTable = document.getElementById('otherAgentsTableBody');
+      if (otherTable) otherTable.innerHTML = '';
+
       for (const [id, config] of Object.entries(agentsData)) {
         const isDefault = id === 'default';
         const url = `${window.location.origin}/?agent=${id}`;
-        
-        const card = document.createElement('div');
-        card.className = 'agent-card';
-        card.innerHTML = `
-          <div class="card-header">
-            <h3>${config.name || 'Unnamed Agent'}</h3>
-            ${isDefault ? '<span class="badge">Default</span>' : ''}
-          </div>
-          <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
-            <strong>Voice:</strong> ${config.voice || 'Aoede'}
-          </div>
-          <div style="color: var(--text-muted); font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-            ${config.prompt || 'No prompt set.'}
-          </div>
-          
-          <div class="link-box">
-            <code>${url}</code>
-            <a href="${url}" target="_blank" title="Open Chat">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
 
-          <div class="card-actions">
-            <button class="secondary" onclick="openModal('${id}')">Edit Agent</button>
-            ${!isDefault ? `<button class="danger" onclick="deleteAgent('${id}')">Delete</button>` : ''}
-          </div>
-        `;
-        grid.appendChild(card);
+        // If it's my agent or default, put it in the grid
+        if (config.is_mine || isDefault || (currentUserData && currentUserData.role !== 'super_admin')) {
+          const card = document.createElement('div');
+          card.className = 'agent-card';
+          card.innerHTML = `
+            <div class="card-header">
+              <h3>${config.name || 'Unnamed Agent'}</h3>
+              ${isDefault ? '<span class="badge">Default</span>' : ''}
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">
+              <strong>Voice:</strong> ${config.voice || 'Aoede'}
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              ${config.prompt || 'No prompt set.'}
+            </div>
+
+            <div class="link-box">
+              <code>${url}</code>
+              <a href="${url}" target="_blank" title="Open Chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+
+            <div class="card-actions">
+              <button class="secondary" onclick="openModal('${id}')">Edit Agent</button>
+              ${!isDefault ? `<button class="danger" onclick="deleteAgent('${id}')">Delete</button>` : ''}
+            </div>
+          `;
+          grid.appendChild(card);
+        } else {
+          // Put in Other Agents table
+          if (otherTable) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${config.name || 'Unnamed Agent'}</td>
+              <td>${config.voice || 'Aoede'}</td>
+              <td>${config.owner_name || 'Unknown'}</td>
+              <td class="actions">
+                <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openModal('${id}')">Edit</button>
+                <button class="danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="deleteAgent('${id}')">Delete</button>
+              </td>
+            `;
+            otherTable.appendChild(tr);
+          }
+        }
+      }
+
+      if (grid.innerHTML === '') {
+        grid.innerHTML = '<div style="color: var(--text-muted); grid-column: 1/-1; text-align: center; padding: 40px;">No agents found.</div>';
+      }
+      if (otherTable && otherTable.innerHTML === '') {
+        otherTable.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-muted);">No other agents found.</td></tr>';
       }
     }
 
@@ -484,11 +1645,10 @@
         prompt: document.getElementById('editPrompt').value
       };
 
-      const res = await fetch(`/admin/api/agents/${id}`, {
+      const res = await apiFetch(`/dashboard/api/agents/${id}`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': authHeader
+        headers: {
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(config)
       });
@@ -503,15 +1663,306 @@
 
     async function deleteAgent(id) {
       if (!confirm('Are you sure you want to completely delete this agent?')) return;
-      
-      const res = await fetch(`/admin/api/agents/${id}`, { 
-        method: 'DELETE',
-        headers: { 'Authorization': authHeader }
+
+      const res = await apiFetch(`/dashboard/api/agents/${id}`, {
+        method: 'DELETE'
       });
       if (res.ok) {
         loadAgents();
       }
     }
+
+    let sseController = null;
+
+    function initSessionsSSE() {
+      // Close existing if any
+      if (sseController) {
+        sseController.abort();
+      }
+      sseController = new AbortController();
+
+      console.log("Connecting to SSE...");
+      const token = localStorage.getItem('gemini_auth_token');
+
+      // Use the global fetchEventSource from the imported module
+      window.fetchEventSource(`/dashboard/api/sessions/sse?t=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        signal: sseController.signal,
+        onmessage(event) {
+          try {
+            const sessions = JSON.parse(event.data);
+            renderSessions(sessions);
+            // Also refresh call history since an updated session list might mean a call ended
+            loadHistory();
+          } catch (e) {
+            console.error("Failed to parse SSE data", e);
+          }
+        },
+        onerror(err) {
+          console.error("SSE Error:", err);
+          // Try to reconnect after 3 seconds
+          if (sseController && !sseController.signal.aborted) {
+            setTimeout(initSessionsSSE, 3000);
+          }
+          throw err; // Allow fetch-event-source to handle it
+        }
+      });
+    }
+
+    function renderSessions(sessions) {
+      const tbody = document.getElementById('sessionsTableBody');
+      tbody.innerHTML = '';
+
+      if (sessions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">No active sessions at the moment.</td></tr>';
+        return;
+      }
+
+      sessions.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 500;">${s.agent_name}</div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; margin-top: 4px;">Live</span>
+          </td>
+          <td><code style="color: var(--accent);">${s.session_id.substring(0, 8)}...</code></td>
+          <td>${s.monitor_count}</td>
+          <td class="actions">
+            <button onclick="monitorSession('${s.session_id}')" style="padding: 6px 12px; font-size: 0.8rem;">Listen & Watch</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function monitorSession(sessionId) {
+      window.open(`/monitor.html?session=${sessionId}`, '_blank', 'width=500,height=700');
+    }
+
+    async function loadHistory() {
+      try {
+        const res = await apiFetch(`/dashboard/api/history?limit=${historyLimit}&offset=${historyOffset}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const history = data.items;
+        const total = data.total;
+
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        if (history.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">No call history available yet.</td></tr>';
+          document.getElementById('historyPaginationInfo').textContent = 'Showing 0-0 of 0';
+          return;
+        }
+
+        history.forEach(h => {
+          const startTime = new Date(h.start_time).toLocaleString();
+          const duration = h.duration || '0:00';
+
+          const tr = document.createElement('tr');
+          tr.dataset.historyData = JSON.stringify(h);
+
+          tr.innerHTML = `
+            <td>${startTime}</td>
+            <td>${h.agent_name}</td>
+            <td>${h.owner_name}</td>
+            <td>${duration}</td>
+            <td class="actions">
+              <button class="secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewTranscript('${h.id}')">View & Listen</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        // Update Pagination Info
+        const startIdx = history.length > 0 ? historyOffset + 1 : 0;
+        const endIdx = Math.min(historyOffset + historyLimit, total);
+        document.getElementById('historyPaginationInfo').textContent = `Showing ${startIdx}-${endIdx} of ${total}`;
+        
+        document.getElementById('prevPageBtn').disabled = historyOffset <= 0;
+        document.getElementById('nextPageBtn').disabled = (historyOffset + historyLimit) >= total;
+
+      } catch (e) {
+        console.error("Failed to load history:", e);
+      }
+    }
+
+    async function changeHistoryPage(dir) {
+      historyOffset += dir * historyLimit;
+      if (historyOffset < 0) historyOffset = 0;
+      await loadHistory();
+    }
+
+    async function changeHistoryLimit() {
+      historyLimit = parseInt(document.getElementById('historyLimit').value);
+      historyOffset = 0;
+      await loadHistory();
+    }
+
+    let currentHistory = [];
+    async function viewTranscript(recordId) {
+      // Find the data in the table
+      const rows = document.querySelectorAll('#historyTableBody tr');
+      let data = null;
+      rows.forEach(r => {
+        if (r.dataset.historyData) {
+          const d = JSON.parse(r.dataset.historyData);
+          if (d.id === recordId) data = d;
+        }
+      });
+
+      if (!data) return;
+
+      document.getElementById('transcriptModal').classList.add('active');
+      document.getElementById('transcriptTitle').textContent = `Transcript: ${data.agent_name}`;
+
+      const content = document.getElementById('transcriptContent');
+      content.innerHTML = '';
+      content.className = 'transcript-container';
+
+      const transcript = JSON.parse(data.transcript || '[]');
+      if (transcript.length === 0) {
+        content.innerHTML = '<div style="color: var(--text-muted); text-align: center;">No transcript data available.</div>';
+      } else {
+        // Group consecutive parts by role to prevent "word-by-word" vertical stacking
+        const grouped = [];
+        transcript.forEach(part => {
+          const last = grouped[grouped.length - 1];
+          // If same role and close in time (within 30 seconds), group them
+          if (last && last.role === part.role && (new Date(part.timestamp) - new Date(last.timestamp)) < 30000) {
+            last.text += (part.text.startsWith(' ') ? '' : ' ') + part.text;
+          } else {
+            grouped.push({ ...part });
+          }
+        });
+
+        grouped.forEach(group => {
+          const bubble = document.createElement('div');
+          bubble.className = `chat-bubble ${group.role === 'user' ? 'user' : 'bot'}`;
+
+          const localTime = new Date(group.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          bubble.innerHTML = `
+            <div class="chat-meta">
+              <strong>${group.role === 'user' ? 'You' : 'AI'}</strong>
+              <span>${localTime}</span>
+            </div>
+            <div style="display: block; white-space: normal; text-align: left;">${group.text.trim()}</div>
+          `;
+          content.appendChild(bubble);
+        });
+      }
+      const playerContainer = document.getElementById('audioPlayerContainer');
+
+      // Fancy WaveSurfer Setup
+      playerContainer.className = 'record-player-fancy';
+      playerContainer.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="audio-wave" id="visualWave" style="display: none;">
+                    <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                </div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); letter-spacing: 1px;">CALL RECORDING</span>
+            </div>
+            <div id="wave-time" style="font-size: 0.8rem; font-family: monospace; opacity: 0.7;">0:00 / 0:00</div>
+        </div>
+        
+        <div id="waveform" style="width: 100%; height: 80px; border-radius: 8px; margin-bottom: 15px;"></div>
+        
+        <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+            <button id="wave-rewind" class="secondary" style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+            </button>
+            <button id="wave-play" class="primary" style="width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);">
+                <svg id="play-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="pause-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+            <button id="wave-forward" class="secondary" style="width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+            </button>
+        </div>
+      `;
+
+      if (data.audio_url) {
+        playerContainer.style.display = 'block';
+        let audioData = data.audio_url;
+        if (typeof audioData === 'string') {
+          try { audioData = JSON.parse(audioData); } catch (e) { }
+        }
+        const audioUrl = audioData.merged;
+
+        if (window.activeWavesurfer) {
+          window.activeWavesurfer.destroy();
+        }
+
+        const wavesurfer = WaveSurfer.create({
+          container: '#waveform',
+          waveColor: '#4f46e5',
+          progressColor: '#818cf8',
+          cursorColor: '#ffffff',
+          barWidth: 3,
+          barRadius: 3,
+          responsive: true,
+          height: 80,
+          normalize: true,
+          url: audioUrl,
+          backend: 'MediaElement', // Better for CORS and large files
+        });
+
+        window.activeWavesurfer = wavesurfer;
+
+        const playBtn = document.getElementById('wave-play');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        const timeDisplay = document.getElementById('wave-time');
+        const visualWave = document.getElementById('visualWave');
+
+        const formatTime = (s) => new Date(s * 1000).toISOString().substr(14, 5);
+
+        wavesurfer.on('ready', () => {
+          console.log("WaveSurfer ready");
+          timeDisplay.textContent = `0:00 / ${formatTime(wavesurfer.getDuration())}`;
+        });
+
+        wavesurfer.on('error', (err) => {
+          console.error("WaveSurfer error:", err);
+          alert("Error loading audio. Check browser console for details (likely CORS).");
+        });
+
+        wavesurfer.on('audioprocess', () => {
+          timeDisplay.textContent = `${formatTime(wavesurfer.getCurrentTime())} / ${formatTime(wavesurfer.getDuration())}`;
+        });
+
+        wavesurfer.on('play', () => {
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          visualWave.style.display = 'flex';
+        });
+
+        wavesurfer.on('pause', () => {
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          visualWave.style.display = 'none';
+        });
+
+        playBtn.onclick = () => wavesurfer.playPause();
+        document.getElementById('wave-rewind').onclick = () => wavesurfer.skip(-5);
+        document.getElementById('wave-forward').onclick = () => wavesurfer.skip(5);
+      } else {
+        playerContainer.style.display = 'none';
+      }
+    }
+
+    function closeTranscriptModal() {
+      document.getElementById('transcriptModal').classList.remove('active');
+      const player = document.getElementById('recordPlayer');
+      player.pause();
+    }
   </script>
 </body>
+
 </html>

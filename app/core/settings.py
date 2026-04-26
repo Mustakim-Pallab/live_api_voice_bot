@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://postgres:postgres@localhost:5433/agents_db"
     admin_username: str = "admin"
     admin_password: str = "admin"
+    jwt_secret_key: str = "your-super-secret-key-change-in-prod"
+    jwt_algorithm: str = "HS256"
+    gcs_bucket_name: str = "voice_bot_data_dump"
+    gcs_service_account_path: str = "vivasoft-gcp-4210bb348a63.json"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

@@ -357,6 +357,10 @@ async function disconnect() {
 
   setCallState("disconnected");
   addMessage("Call disconnected.", "system");
+
+  if (typeof window.triggerPostCallSignup === "function") {
+    window.triggerPostCallSignup();
+  }
 }
 
 function sendText() {

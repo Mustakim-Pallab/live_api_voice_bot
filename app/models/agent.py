@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app.db.database import Base
 
 class AgentModel(Base):
@@ -8,3 +9,6 @@ class AgentModel(Base):
     name = Column(String, nullable=False)
     prompt = Column(String, nullable=False)
     voice = Column(String, nullable=False)
+    owner_id = Column(String, ForeignKey("users.id"), nullable=True)
+
+    owner = relationship("UserModel")

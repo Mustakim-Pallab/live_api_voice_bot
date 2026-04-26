@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Monitor | Gemini Voice Bot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #151b2b;
+      --primary: #4f46e5;
+      --accent: #06b6d4;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #1e293b;
+    }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      padding: 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    #status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    #statusDot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+    #statusDot.active {
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+    }
+    #chatWindow {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      padding: 12px 16px;
+      border-radius: 16px;
+      max-width: 85%;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .system {
+      align-self: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+    .user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .bot {
+      align-self: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .controls {
+      padding: 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+    }
+    button:hover {
+      filter: brightness(1.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Monitoring Session</h1>
+    <div id="status">
+      <div id="statusDot"></div>
+      <span id="statusText">Disconnected</span>
+    </div>
+  </header>
+
+  <div id="chatWindow">
+    <div class="message system">Connecting to session monitor...</div>
+  </div>
+
+  <div class="controls">
+    <button id="enableAudio">Click to Enable Audio</button>
+  </div>
+
+  <script>
+    const chatWindow = document.getElementById('chatWindow');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const enableAudioBtn = document.getElementById('enableAudio');
+    
+    let playbackContext = null;
+    let nextPlayAt = 0;
+    let socket = null;
+
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session');
+
+    function addMessage(text, type = "system") {
+      const div = document.createElement("div");
+      div.className = `message ${type}`;
+      div.textContent = text;
+      chatWindow.appendChild(div);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      return div;
+    }
+
+    let activeUserMsg = null;
+    let activeBotMsg = null;
+
+    enableAudioBtn.onclick = () => {
+      if (!playbackContext) {
+        playbackContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (playbackContext.state === 'suspended') {
+        playbackContext.resume();
+      }
+      enableAudioBtn.textContent = "Audio Enabled";
+      enableAudioBtn.disabled = true;
+      enableAudioBtn.style.opacity = "0.5";
+    };
+
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    function pcm16ToAudioBuffer(arrayBuffer, sampleRate) {
+      const pcm = new Int16Array(arrayBuffer);
+      const buffer = playbackContext.createBuffer(1, pcm.length, sampleRate);
+      const channel = buffer.getChannelData(0);
+      for (let i = 0; i < pcm.length; i++) {
+        channel[i] = pcm[i] / 0x8000;
+      }
+      return buffer;
+    }
+
+    function playPcmChunk(base64Pcm, sampleRate = 24000) {
+      if (!playbackContext) return;
+      
+      const audioBuffer = pcm16ToAudioBuffer(base64ToArrayBuffer(base64Pcm), sampleRate);
+      const source = playbackContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(playbackContext.destination);
+
+      const now = playbackContext.currentTime;
+      if (nextPlayAt < now) {
+        nextPlayAt = now + 0.05;
+      }
+      source.start(nextPlayAt);
+      nextPlayAt += audioBuffer.duration;
+    }
+
+    function connect() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws/monitor/${sessionId}`;
+      
+      socket = new WebSocket(wsUrl);
+
+      socket.onopen = () => {
+        statusDot.classList.add('active');
+        statusText.textContent = 'Connected';
+        addMessage("Monitor connection established.", "system");
+      };
+
+      socket.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+
+        if (msg.type === "ready") {
+          addMessage("Session is ready.", "system");
+        } else if (msg.type === "text" || msg.type === "output_transcript") {
+          if (!activeBotMsg) {
+            activeBotMsg = addMessage("", "bot");
+          }
+          activeBotMsg.textContent += msg.text;
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        } else if (msg.type === "input_transcript") {
+          if (!activeUserMsg) {
+            activeUserMsg = addMessage("", "user");
+          }
+          activeUserMsg.textContent += msg.text;
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        } else if (msg.type === "audio_out") {
+          playPcmChunk(msg.pcm16, msg.sample_rate || 24000);
+        } else if (msg.type === "audio_in") {
+          // Play user audio too! Usually 16000
+          playPcmChunk(msg.pcm16, 16000);
+        } else if (msg.type === "turn_complete") {
+          activeUserMsg = null;
+          activeBotMsg = null;
+        } else if (msg.type === "interrupted") {
+          nextPlayAt = 0;
+          addMessage("Interrupted", "system");
+        } else if (msg.type === "error") {
+          addMessage(`Error: ${msg.message}`, "system");
+        }
+      };
+
+      socket.onclose = () => {
+        statusDot.classList.remove('active');
+        statusText.textContent = 'Disconnected';
+        addMessage("Monitor connection closed.", "system");
+        setTimeout(connect, 3000); // Try to reconnect
+      };
+    }
+
+    if (sessionId) {
+      connect();
+    } else {
+      addMessage("No session ID provided.", "system");
+    }
+  </script>
+</body>
+</html>

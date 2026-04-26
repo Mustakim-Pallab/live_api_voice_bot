@@ -261,6 +261,170 @@
       display: block;
     }
 
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .auth-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Auth Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 400px;
+      padding: 32px;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.5rem;
+    }
+
+    .modal p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: var(--txt);
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .input-group input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--txt);
+      padding: 12px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-btn {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+
+    .modal-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .switch-mode {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .switch-mode a {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .switch-mode a:hover {
+      text-decoration: underline;
+    }
+
+    #authError {
+      color: var(--danger);
+      font-size: 0.85rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     .theme-btn {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -279,20 +443,142 @@
     .theme-btn:hover {
       background: var(--border);
     }
+
+    /* Floating Action Bar */
+    .top-actions {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      animation: slideIn 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Exciting Button Styling */
+    .auth-btn-exciting {
+      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      background-size: 200% 200%;
+      color: white !important;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+      animation: pulse-exciting 2s infinite, gradient-shift 3s ease infinite;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .auth-btn-exciting:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.6);
+    }
+
+    @keyframes pulse-exciting {
+      0% {
+        box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+      }
+    }
+
+    @keyframes gradient-shift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .user-pill {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--txt);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-pill:hover {
+      background: var(--border);
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #ef4444;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      z-index: 2000;
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 
 <body>
+  <div id="toast"></div>
+
+  <div class="top-actions">
+    <button class="auth-btn-exciting" id="loginBtnTrigger" onclick="openAuthModal('register')">
+      <span>✨ Try Yours Free</span>
+    </button>
+    <button class="user-pill hidden" id="userPill" onclick="window.location.href='/dashboard'"></button>
+    <button class="theme-btn" id="themeToggle" title="Toggle Light/Dark Mode">🌓</button>
+    <button class="theme-btn hidden" id="logoutBtnTrigger" onclick="publicLogout()">Logout</button>
+  </div>
 
   <div class="chat-container">
     <div class="header">
       <div class="title">
-        <div id="statusDot" class="status-dot"></div>
-        <span id="agentName">Gemini Voice Assistant</span>
+        <div class="status-dot" id="statusDot"></div>
+        <span id="agentName">Gemini Voice Bot</span>
       </div>
-      <button class="theme-btn" id="themeToggle" title="Toggle Light/Dark Mode">
-        🌓 Theme
-      </button>
+      <div class="header-actions">
+      </div>
     </div>
 
     <div id="chatWindow" class="chat-window">
@@ -321,11 +607,60 @@
     </div>
   </div>
 
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <button class="close-btn" onclick="closeAuthModal()">×</button>
+
+      <!-- Login View -->
+      <div id="loginView">
+        <h2>Welcome Back</h2>
+        <p>Log in to create your own voice agents.</p>
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="l_username" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="l_password" autocomplete="current-password">
+        </div>
+        <button class="modal-btn" onclick="submitLogin()">Log In</button>
+        <div class="switch-mode">New here? <a onclick="switchAuthView('register')">Create an account</a></div>
+      </div>
+
+      <!-- Register View -->
+      <div id="registerView" class="hidden">
+        <h2>Create Account</h2>
+        <p>Join to build your own AI voice bots.</p>
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" id="r_fullname" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="r_email" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="r_username" autocomplete="off">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="r_password" autocomplete="new-password">
+        </div>
+        <button class="modal-btn" onclick="submitRegister()">Sign Up</button>
+        <div class="switch-mode">Already have an account? <a onclick="switchAuthView('login')">Log in</a></div>
+      </div>
+
+      <div id="authError"></div>
+    </div>
+  </div>
+
   <script>
     // Theme Management
     const themeToggle = document.getElementById('themeToggle');
     const root = document.documentElement;
-    
+
     function setTheme(theme) {
       if (theme === 'system') {
         const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -349,6 +684,131 @@
       const currentTheme = root.getAttribute('data-theme');
       setTheme(currentTheme === 'dark' ? 'light' : 'dark');
     });
+
+    // Auth Logic
+    const savedToken = localStorage.getItem('gemini_auth_token');
+    if (savedToken) {
+      fetch('/api/me', { headers: { 'Authorization': `Bearer ${savedToken}` } })
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error('Invalid token');
+        })
+        .then(data => {
+          const up = document.getElementById('userPill');
+          up.textContent = '👤 ' + (data.full_name || data.username);
+          up.classList.remove('hidden');
+          document.getElementById('loginBtnTrigger').classList.add('hidden');
+          document.getElementById('logoutBtnTrigger').classList.remove('hidden');
+        })
+        .catch(() => {
+          localStorage.removeItem('gemini_auth_token');
+        });
+    }
+
+    function publicLogout() {
+      localStorage.removeItem('gemini_auth_token');
+      // Clear all inputs
+      document.querySelectorAll('input').forEach(i => i.value = '');
+      window.location.replace('/dashboard');
+    }
+
+    // Fix for browser back button showing logged-in state after logout
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload();
+      }
+    });
+
+    // Export function to allow app.js to trigger the modal when call ends
+    window.triggerPostCallSignup = function () {
+      if (!localStorage.getItem('gemini_auth_token')) {
+        openAuthModal('register');
+      }
+    };
+
+    function openAuthModal(view) {
+      document.getElementById('authModal').classList.add('active');
+      switchAuthView(view);
+      document.getElementById('authError').style.display = 'none';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('active');
+      // Clear inputs when closing
+      document.querySelectorAll('#authModal input').forEach(i => i.value = '');
+    }
+
+    function switchAuthView(view) {
+      document.getElementById('authError').style.display = 'none';
+      if (view === 'login') {
+        document.getElementById('loginView').classList.remove('hidden');
+        document.getElementById('registerView').classList.add('hidden');
+      } else {
+        document.getElementById('loginView').classList.add('hidden');
+        document.getElementById('registerView').classList.remove('hidden');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function showAuthError(msg) {
+      showToast(msg);
+    }
+
+    async function submitLogin() {
+      const u = document.getElementById('l_username').value;
+      const p = document.getElementById('l_password').value;
+      if (!u || !p) return showAuthError("Please fill all fields");
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('gemini_auth_token', data.token);
+        window.location.href = '/dashboard';
+      } else {
+        showAuthError("Invalid username or password");
+      }
+    }
+
+    async function submitRegister() {
+      const f = document.getElementById('r_fullname').value;
+      const e = document.getElementById('r_email').value;
+      const u = document.getElementById('r_username').value;
+      const p = document.getElementById('r_password').value;
+
+      if (!u || !p) return showAuthError("Username and password are required");
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p, email: e, full_name: f })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('gemini_auth_token', data.token);
+        window.location.href = '/dashboard';
+      } else {
+        const errData = await res.json();
+        let msg = errData.message;
+        if (!msg && errData.detail) {
+          msg = Array.isArray(errData.detail) ? errData.detail[0].msg : errData.detail;
+        }
+        showAuthError(msg || "Registration failed");
+      }
+    }
   </script>
   <script type="module" src="/web/app.js"></script>
 </body>
